@@ -17,19 +17,25 @@
 #'          = rhoC if i and j are observations in the same cluster but not the 
 #'                    same subcluster. rhoC <= rhoCT
 #'                    
-#' @param means Vector of prevalences, one for each subcluster within a cluster. The length of this vector determines the number of subclusters per cluster.
+#' @param means Vector of prevalences, one for each subcluster within the cluster. The length of this vector determines the number of subclusters per cluster.
 #' @param rhoC Correlation between two observations in the same cluster, but not the same subcluster.
 #' @param rhoCT Correlation between two observations in the same subcluster.
 #' @param n Number of observations per subcluster.
 #' @param C Number of clusters to sample.
 #' @param sample If sample=FALSE then just check whether the values of rhoC, rhoCT, means are feasible and stop if they are not feasible.
 #' @export
-#' @examples rBEBin(rhoC=0.2,rhoCT=0.4,means=rep(c(0.4,0.1),1),n=20,C=10,sample=T)
+#' @examples rNestBin(rhoC=0.2,rhoCT=0.4,means=rep(c(0.4,0.1),1),n=20,C=10,sample=T)
 rNestBin <- function(means,rhoC,rhoCT,n=1,C=1,sample=TRUE){ 
 
-  TT = length(means) # number of time periods
+  if(rhoc>rhoct){
+    stop("rhoc must not be greater than rhoct")
+  }
+  if(rhoc<=0){
+    stop("rhoc and rhoct must be positive")
+  }
+  
+  TT = length(means) # number of subclusters (or time periods)
   NN = TT*n # total number of observations per cluster
-
   PPV = rep(means,each=n)
   
   # prentice constraints: maximum value for rhoC
@@ -70,6 +76,9 @@ rNestBin <- function(means,rhoC,rhoCT,n=1,C=1,sample=TRUE){
   qyL = aa/(1/cc-bb/qz)
   qyU = (cc-bb*qz)/aa
   qy = (qyL+qyU)/2# sqrt odds for y
+  if(rhoc==rhoct){ # in this case aa=0, so the value of qy is irrelevant
+    qy = rep(1,length(PP))
+  }
   stopifnot(aa/qy+bb/qz<=1/cc)
   stopifnot(aa*qy+bb*qz<=cc)
   zz = qz^2/(1+qz^2)
@@ -78,7 +87,7 @@ rNestBin <- function(means,rhoC,rhoCT,n=1,C=1,sample=TRUE){
   soy = sqrt(yy/(1-yy)) # sqrt odds for y, same as qy
   vary = yy*(1-yy) 
   soz = sqrt(zz/(1-zz)) # sqrt odds for z, same as qz
-  varz = zz*(1-zz) # sqrt(2)/3
+  varz = zz*(1-zz) 
   mz = lz/sqrt(varz) # length TT
   my = ly/sqrt(vary) # length TT
   # vector versions, length NN = n*TT
