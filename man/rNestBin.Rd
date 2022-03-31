@@ -7,7 +7,7 @@
 rNestBin(means, rhoC, rhoCT, n = 1, C = 1, sample = TRUE)
 }
 \arguments{
-\item{means}{Vector of prevalences, one for each subcluster within a cluster. The length of this vector determines the number of subclusters per cluster.}
+\item{means}{Vector of prevalences, one for each subcluster within the cluster. The length of this vector determines the number of subclusters per cluster.}
 
 \item{rhoC}{Correlation between two observations in the same cluster, but not the same subcluster.}
 
@@ -39,5 +39,5 @@ R\link{i,j} = 1 if i = j
 same subcluster. rhoC <= rhoCT
 }
 \examples{
-rBEBin(rhoC=0.2,rhoCT=0.4,means=rep(c(0.4,0.1),1),n=20,C=10,sample=T)
+rNestBin(rhoC=0.2,rhoCT=0.4,means=rep(c(0.4,0.1),1),n=20,C=10,sample=T)
 }
