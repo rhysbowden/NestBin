@@ -24,7 +24,7 @@
 #' @param C Number of clusters to sample.
 #' @param sample If sample=FALSE then just check whether the values of rhoC, rhoCT, means are feasible and stop if they are not feasible.
 #' @export
-#' @examples rNestBin(rhoC=0.2,rhoCT=0.4,means=rep(c(0.4,0.1),1),n=20,C=10,sample=T)
+#' @examples rNestBin(rhoC=0.2,rhoCT=0.4,means=c(0.4,0.1),n=20,C=10,sample=T)
 rNestBin <- function(means,rhoC,rhoCT,n=1,C=1,sample=TRUE){ 
 
   if(rhoc>rhoct){

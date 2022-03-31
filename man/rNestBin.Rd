@@ -39,5 +39,5 @@ R\link{i,j} = 1 if i = j
 same subcluster. rhoC <= rhoCT
 }
 \examples{
-rNestBin(rhoC=0.2,rhoCT=0.4,means=rep(c(0.4,0.1),1),n=20,C=10,sample=T)
+rNestBin(rhoC=0.2,rhoCT=0.4,means=c(0.4,0.1),n=20,C=10,sample=T)
 }
