@@ -33,6 +33,9 @@ rNestBin <- function(means,rhoC,rhoCT,n=1,C=1,sample=TRUE){
   if(rhoC<=0){
     stop("rhoC and rhoCT must be positive")
   }
+  if(max(means)>=1|min(means)<=0){
+    stop("means must be between 0 and 1")
+  }
   
   TT = length(means) # number of subclusters (or time periods)
   NN = TT*n # total number of observations per cluster
