@@ -27,11 +27,11 @@
 #' @examples rNestBin(rhoC=0.2,rhoCT=0.4,means=c(0.4,0.1),n=20,C=10,sample=T)
 rNestBin <- function(means,rhoC,rhoCT,n=1,C=1,sample=TRUE){ 
 
-  if(rhoc>rhoct){
-    stop("rhoc must not be greater than rhoct")
+  if(rhoC>rhoCT){
+    stop("rhoC must not be greater than rhoCT")
   }
-  if(rhoc<=0){
-    stop("rhoc and rhoct must be positive")
+  if(rhoC<=0){
+    stop("rhoC and rhoCT must be positive")
   }
   
   TT = length(means) # number of subclusters (or time periods)
@@ -76,7 +76,7 @@ rNestBin <- function(means,rhoC,rhoCT,n=1,C=1,sample=TRUE){
   qyL = aa/(1/cc-bb/qz)
   qyU = (cc-bb*qz)/aa
   qy = (qyL+qyU)/2# sqrt odds for y
-  if(rhoc==rhoct){ # in this case aa=0, so the value of qy is irrelevant
+  if(rhoC==rhoCT){ # in this case aa=0, so the value of qy is irrelevant
     qy = rep(1,length(PP))
   }
   stopifnot(aa/qy+bb/qz<=1/cc)
