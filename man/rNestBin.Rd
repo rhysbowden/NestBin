@@ -13,7 +13,7 @@ rNestBin(means, rhoC, rhoCT, n = 1, C = 1, sample = TRUE)
 
 \item{rhoCT}{Correlation between two observations in the same subcluster.}
 
-\item{n}{Number of observations per subcluster.}
+\item{n}{Number of observations per subcluster. If n is length 1 there are assumed to be n observations in each subcluster. If n has length>1, it must have the same length as means.}
 
 \item{C}{Number of clusters to sample.}
 

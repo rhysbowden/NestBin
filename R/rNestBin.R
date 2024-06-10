@@ -20,7 +20,7 @@
 #' @param means Vector of prevalences, one for each subcluster within the cluster. The length of this vector determines the number of subclusters per cluster.
 #' @param rhoC Correlation between two observations in the same cluster, but not the same subcluster.
 #' @param rhoCT Correlation between two observations in the same subcluster.
-#' @param n Number of observations per subcluster.
+#' @param n Number of observations per subcluster. If n is length 1 there are assumed to be n observations in each subcluster. If n has length>1, it must have the same length as means.
 #' @param C Number of clusters to sample.
 #' @param sample If sample=FALSE then just check whether the values of rhoC, rhoCT, means are feasible and stop if they are not feasible.
 #' @export
@@ -38,8 +38,16 @@ rNestBin <- function(means,rhoC,rhoCT,n=1,C=1,sample=TRUE){
   }
   
   TT = length(means) # number of subclusters (or time periods)
-  NN = TT*n # total number of observations per cluster
-  PPV = rep(means,each=n)
+  if(length(n)==1){
+    NN = TT*n # total number of observations per cluster
+    PPV = rep(means,each=n) # vector of prevalences of observations
+  }else{
+    if(length(n)!=TT){
+      stop("n must be length 1 or the same length as means")
+    }
+    NN = sum(n) # total number of observations per cluster
+    PPV = rep(means,times=n) # vector of prevalences of observations
+  }
   
   # prentice constraints: maximum value for rhoC
   Pl = min(means)
@@ -94,13 +102,21 @@ rNestBin <- function(means,rhoC,rhoCT,n=1,C=1,sample=TRUE){
   mz = lz/sqrt(varz) # length TT
   my = ly/sqrt(vary) # length TT
   # vector versions, length NN = n*TT
-  yyV = rep(yy,each=n)
+  if(length(n)==1){
+    yyV = rep(yy,each=n)
+    mzV = rep(mz,each=n)
+    myV = rep(my,each=n)
+    soyV = rep(soy,each=n)
+    varyV = rep(vary,each=n)
+  }else{
+    yyV = rep(yy,times=n)
+    mzV = rep(mz,times=n)
+    myV = rep(my,times=n)
+    soyV = rep(soy,times=n)
+    varyV = rep(vary,times=n)
+  }
   zzV = rep(zz,each=NN)
-  mzV = rep(mz,each=n)
-  myV = rep(my,each=n)
   mxV = 1-mzV-myV
-  soyV = rep(soy,each=n)
-  varyV = rep(vary,each=n)
   sozV = rep(soz,each=NN)
   varzV = rep(varz,each=NN)
   xxV = (PPV-myV*yyV-mzV*zzV)/mxV
@@ -112,13 +128,24 @@ rNestBin <- function(means,rhoC,rhoCT,n=1,C=1,sample=TRUE){
     YY = matrix(0,nrow=C,ncol=NN)
     ZZ = matrix(0,nrow=C,ncol=NN)
     UU = matrix(0,nrow=C,ncol=NN)
-    for(i in 1:C){
-      XX[i,] = rbinom(n=NN,size=1,prob=xxV)
-      YY[i,] = rep(rbinom(n=TT,size=1,prob=yy),each=n)
-      ZZ[i,] = rep(rbinom(n=1,size=1,prob=zz),each=NN)
-      UU[i,] = runif(n=NN,0,1)
-      mixture = XX[i,]*(UU[i,]<=mxV)+YY[i,]*(UU[i,]>mxV)*(UU[i,]<=(mxV+myV))+ZZ[i,]*(UU[i,]>=(mxV+myV))
-      WW[i,] = mixture
+    if(length(n)==1){
+      for(i in 1:C){
+        XX[i,] = rbinom(n=NN,size=1,prob=xxV)
+        YY[i,] = rep(rbinom(n=TT,size=1,prob=yy),each=n)
+        ZZ[i,] = rep(rbinom(n=1,size=1,prob=zz),each=NN)
+        UU[i,] = runif(n=NN,0,1)
+        mixture = XX[i,]*(UU[i,]<=mxV)+YY[i,]*(UU[i,]>mxV)*(UU[i,]<=(mxV+myV))+ZZ[i,]*(UU[i,]>=(mxV+myV))
+        WW[i,] = mixture
+      }
+    }else{
+      for(i in 1:C){
+        XX[i,] = rbinom(n=NN,size=1,prob=xxV)
+        YY[i,] = rep(rbinom(n=TT,size=1,prob=yy),times=n)
+        ZZ[i,] = rep(rbinom(n=1,size=1,prob=zz),each=NN)
+        UU[i,] = runif(n=NN,0,1)
+        mixture = XX[i,]*(UU[i,]<=mxV)+YY[i,]*(UU[i,]>mxV)*(UU[i,]<=(mxV+myV))+ZZ[i,]*(UU[i,]>=(mxV+myV))
+        WW[i,] = mixture
+      }
     }
   }else{
     WW=-1
